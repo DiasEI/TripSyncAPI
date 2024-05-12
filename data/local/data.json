@@ -1,12 +1,12 @@
 {
     "users": [
-        {
-            "number": "1778",
-            "name": "Marcelo Filipe",
-            "city": "Braga",
-            "birthday": "17-09-1991"
-        }
-    ],
-    "schools": [],
-    "courses": []
-}
+      {
+        "id_utilizador": 1,
+        "username": "user",
+        "telemovel": "123456789",
+        "password": "password",
+        "email": "example@example.com",
+        "foto": "example.jpg"
+      }
+    ]
+  }
