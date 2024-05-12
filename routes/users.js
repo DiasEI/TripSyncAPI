@@ -3,9 +3,9 @@ const controller = require('../controllers/user');
 
 //users CRUD
 userRouter.get('/', controller.getAll); //read all
-userRouter.get('/:id_utilizador', controller.getById); //read one by his id (user number)
+userRouter.get('/:id', controller.getById); //read one by his id
 userRouter.post('/create', controller.create); //create new user
 userRouter.put('/update', controller.update); //update user
-userRouter.delete('/delete/:id_utilizador', controller.delete); //delete user
+userRouter.delete('/delete/:id', controller.delete); //delete user
 
 module.exports = userRouter;

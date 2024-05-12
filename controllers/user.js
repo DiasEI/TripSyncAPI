@@ -1,80 +1,117 @@
 const fs = require('fs');
 
-//return all users
+// Return all users
 exports.getAll = async (req, res) => {
-    //read local data json file
-    const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
-    //parse to json
-    const data = JSON.parse(datajson);
-    //returns users array
-    return res.send(data.users);
+    try {
+        // Read local data JSON file
+        const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
+        // Parse to JSON
+        const data = JSON.parse(datajson);
+        // Return users array
+        return res.send(data.users);
+    } catch (error) {
+        return res.status(500).send("Erro interno do servidor");
+    }
 }
 
-//return user by his id_utilizador
+// Return user by his id_utilizador
 exports.getById = async (req, res) => {
-    //get user id requested
-    const id = req.params.id_utilizador;
-    //read local data json file
-    const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
-    //parse to json
-    const data = JSON.parse(datajson);
-    //finds user by his id
-    const user = data.users.filter(user => user.id_utilizador == id);
-    //return user
-    res.send(user);
+    try {
+        // Get user id requested
+        const id = req.params.id_utilizador;
+        // Read local data JSON file
+        const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
+        // Parse to JSON
+        const data = JSON.parse(datajson);
+        // Find user by his id
+        const user = data.users.find(user => user.id_utilizador == id);
+        // Check if user exists
+        if (!user) {
+            return res.status(404).send("Utilizador não encontrado");
+        }
+        // Return user
+        return res.send(user);
+    } catch (error) {
+        return res.status(500).send("Erro interno do servidor");
+    }
 }
 
-//creates user
+// creates user
 exports.create = async (req, res) => {
-    //get requested user properties
-    const { id_utilizador, username, telemovel, password, email, foto } = req.body;
-    //read local data json file
-    const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
-    //parse to json
-    const data = JSON.parse(datajson);
-    //add to users array
-    data.users.push(req.body);
-    fs.writeFileSync('data/local/data.json', JSON.stringify(data));
-    //return new user
-    return res.status(201).send(req.body);
+    try {
+        // read local data json file
+        const datajson = fs.readFileSync("data/local/data.json", "utf-8");
+        // parse to json
+        const data = JSON.parse(datajson);
+        // get requested user properties
+        const { username, telemovel, password, email, foto } = req.body;
+        // generate new id_utilizador (auto-increment)
+        const id_utilizador = data.users.length > 0 ? data.users[data.users.length - 1].id_utilizador + 1 : 1;
+        // create new user object
+        const newUser = { id_utilizador, username, telemovel, password, email, foto };
+        // add to users array
+        data.users.push(newUser);
+        // update local database
+        fs.writeFileSync('data/local/data.json', JSON.stringify(data));
+        // return new user
+        return res.status(201).send(newUser);
+    } catch (error) {
+        return res.status(500).send("Erro interno do servidor");
+    }
 }
 
-//updates user
+// Update user
 exports.update = async (req, res) => {
-    //get requested user properties
-    const { id_utilizador, username, telemovel, password, email, foto } = req.body;
-    //read local data json file
-    const datajson = fs.readFileSync("data/local/data.json", "utf-8");
-    //parse to json
-    const data = JSON.parse(datajson);
-    //find user to update
-    const user = data.users.find(user => user.id_utilizador == id);
-    //update properties
-    user.username = username;
-    user.telemovel = telemovel;
-    user.password = password;
-    user.email = email;
-    user.foto = foto;
-    //update local database
-    fs.writeFileSync('data/local/data.json', JSON.stringify(data));
-    //return updated user
-    return res.send({ id_utilizador, username, telemovel, password, email, foto });
+    try {
+        // Get requested user properties
+        const { id_utilizador, username, telemovel, password, email, foto } = req.body;
+        // Read local data JSON file
+        const datajson = fs.readFileSync("data/local/data.json", "utf-8");
+        // Parse to JSON
+        const data = JSON.parse(datajson);
+        // Find user to update
+        const user = data.users.find(user => user.id_utilizador == id_utilizador);
+        // Check if user exists
+        if (!user) {
+            return res.status(404).send("Utilizador não encontrado");
+        }
+        // Update properties
+        user.username = username;
+        user.telemovel = telemovel;
+        user.password = password;
+        user.email = email;
+        user.foto = foto;
+        // Update local database
+        fs.writeFileSync('data/local/data.json', JSON.stringify(data));
+        // Return updated user
+        return res.send({ id_utilizador, username, telemovel, password, email, foto });
+    } catch (error) {
+        return res.status(500).send("Erro interno do servidor");
+    }
 }
 
-//delete user by his id_utilizador
+// Delete user by his id_utilizador
 exports.delete = async (req, res) => {
-    //get user id requested
-    const id = req.params.id_utilizador;
-    //read local data json file
-    const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
-    //parse to json
-    const data = JSON.parse(datajson);
-    //find user to delete
-    const user = data.users.filter(user => user.id_utilizador == id);
-    //delete user
-    data.users.splice(user, 1);
-    //update local database
-    fs.writeFileSync('data/local/data.json', JSON.stringify(data));
-    //return ok
-    return res.status(200).send("ok");
+    try {
+        // Get user id requested
+        const id = req.params.id_utilizador;
+        // Read local data JSON file
+        const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
+        // Parse to JSON
+        const data = JSON.parse(datajson);
+        // Find user to delete
+        const userIndex = data.users.findIndex(user => user.id_utilizador == id);
+        // Check if user exists
+        if (userIndex === -1) {
+            return res.status(404).send("Utilizador não encontrado");
+        }
+        // Delete user
+        data.users.splice(userIndex, 1);
+        // Update local database
+        fs.writeFileSync('data/local/data.json', JSON.stringify(data));
+        // Return ok
+        return res.status(200).send("Utilizador eliminado com sucesso");
+    } catch (error) {
+        return res.status(500).send("Erro interno do servidor");
+    }
 }

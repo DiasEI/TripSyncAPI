@@ -8,5 +8,8 @@
         "email": "example@example.com",
         "foto": "example.jpg"
       }
-    ]
+    ],
+    "viagens": [],
+    "locais": [],
+    "fotos": []
   }
