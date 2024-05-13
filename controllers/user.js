@@ -48,7 +48,7 @@ exports.create = async (req, res) => {
         // generate new id_utilizador (auto-increment)
         const id_utilizador = data.users.length > 0 ? data.users[data.users.length - 1].id_utilizador + 1 : 1;
         // create new user object
-        const newUser = { id_utilizador, username, telemovel, password, email, foto };
+        const newUser = { id_utilizador, nome, username, telemovel, password, email, foto };
         // add to users array
         data.users.push(newUser);
         // update local database
@@ -84,7 +84,7 @@ exports.update = async (req, res) => {
         // Update local database
         fs.writeFileSync('data/local/data.json', JSON.stringify(data));
         // Return updated user
-        return res.send({ id_utilizador, username, telemovel, password, email, foto });
+        return res.send({ id_utilizador, nome, username, telemovel, password, email, foto });
     } catch (error) {
         return res.status(500).send("Erro interno do servidor");
     }
