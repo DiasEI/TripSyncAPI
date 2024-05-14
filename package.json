@@ -10,7 +10,7 @@
   "author": "Trip Sync",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.4.2",
+    "@prisma/client": "^5.14.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -20,6 +20,7 @@
     "nodemon": "^3.1.0"
   },
   "devDependencies": {
+    "prisma": "^5.14.0",
     "webpack-cli": "^5.1.4"
   },
   "repository": {
@@ -29,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/DiasEI/TripSyncAPI/issues"
   },
-  "homepage": "https://github.com/DiasEI/TripSyncAPI#readme"
+  "homepage": "https://github.com/DiasEI/TripSyncAPI#readme",
+  "prisma": {
+    "schema": "data/prisma/schema.prisma"
+  }
 }
