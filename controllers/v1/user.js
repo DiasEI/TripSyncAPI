@@ -64,7 +64,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         // Get requested user properties
-        const { id_utilizador, username, telemovel, password, email, foto } = req.body;
+        const { id_utilizador, nome, username, telemovel, password, email, foto } = req.body;
         // Read local data JSON file
         const datajson = fs.readFileSync("data/local/data.json", "utf-8");
         // Parse to JSON
@@ -76,6 +76,7 @@ exports.update = async (req, res) => {
             return res.status(404).send("Utilizador não encontrado");
         }
         // Update properties
+        user.nome = nome;
         user.username = username;
         user.telemovel = telemovel;
         user.password = password;
