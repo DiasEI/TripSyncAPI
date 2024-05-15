@@ -7,26 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
-model Users{
-  id_utilizador String  @id @default(uuid())
-  nome String  @db.VarChar(255)
-  username String  @db.VarChar(255)
-  telemovel int
-  email String @unique
-  password String
-  foto
+model Users {
+  id_utilizador String   @id @default(uuid())
+  nome          String
+  username      String
+  telemovel     Int
+  email         String
+  password      String
+  foto          Bytes?
+  Viagem        Viagem[]
 }
 
-model foto{
+model foto {
+  id_foto   String @id @default(uuid())
+  imageData Bytes?
+  id_viagem String
+  viagem    Viagem @relation(fields: [id_viagem], references: [id_viagem])
 }
 
-model local{
+model local {
+  id_local      String @id @default(uuid())
+  nome          String
+  localizacao   String
+  tipo          String
+  id_viagem     String
+  classificacao Int
+  viagem        Viagem @relation(fields: [id_viagem], references: [id_viagem])
 }
 
-model user {
-}
-
-model viagem{
+model Viagem {
+  id_viagem     String   @id @default(uuid())
+  titulo        String
+  descricao     String
+  cidade        String
+  custos        Float
+  data_inicio   DateTime
+  data_fim      DateTime
+  classificacao Int
+  id_utilizador String
+  pais          String
+  user          Users    @relation(fields: [id_utilizador], references: [id_utilizador])
+  foto          foto[]
+  local         local[]
 }
