@@ -1,117 +1,102 @@
-const fs = require('fs');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 // Return all users
 exports.getAll = async (req, res) => {
     try {
-        // Read local data JSON file
-        const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
-        // Parse to JSON
-        const data = JSON.parse(datajson);
-        // Return users array
-        return res.send(data.users);
+        const response = await prisma.Users.findMany();
+        res.status(200).json(response);
     } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
+        res.status(500).json({ msg: error.message });
     }
-}
+};
 
 // Return user by his id_utilizador
 exports.getById = async (req, res) => {
+    const id = req.params.id_utilizador;
     try {
-        // Get user id requested
-        const id = req.params.id_utilizador;
-        // Read local data JSON file
-        const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
-        // Parse to JSON
-        const data = JSON.parse(datajson);
-        // Find user by his id
-        const user = data.users.find(user => user.id_utilizador == id);
-        // Check if user exists
-        if (!user) {
-            return res.status(404).send("Utilizador não encontrado");
+        const response = await prisma.Users.findUnique({
+            where: { id_utilizador: id },
+        });
+        if (!response) {
+            return res.status(404).json({ msg: "Utilizador não encontrado" });
         }
-        // Return user
-        return res.send(user);
+        res.status(200).json(response);
     } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
+        res.status(500).json({ msg: error.message });
     }
-}
+};
 
-// creates user
+// Create user
 exports.create = async (req, res) => {
-    try {
-        // read local data json file
-        const datajson = fs.readFileSync("data/local/data.json", "utf-8");
-        // parse to json
-        const data = JSON.parse(datajson);
-        // get requested user properties
-        const { username, telemovel, password, email, foto } = req.body;
-        // generate new id_utilizador (auto-increment)
-        const id_utilizador = data.users.length > 0 ? data.users[data.users.length - 1].id_utilizador + 1 : 1;
-        // create new user object
-        const newUser = { id_utilizador, nome, username, telemovel, password, email, foto };
-        // add to users array
-        data.users.push(newUser);
-        // update local database
-        fs.writeFileSync('data/local/data.json', JSON.stringify(data));
-        // return new user
-        return res.status(201).send(newUser);
-    } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
+    const { nome, username, telemovel, password, email, foto } = req.body;
+
+    if (!nome || !username || !telemovel || !password || !email) {
+        return res.status(400).json({ msg: "Campos obrigatórios em falta" });
     }
-}
+
+    try {
+        const existingUser = await prisma.Users.findUnique({
+            where: { email },
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ msg: "O utilizador com este email já existe" });
+        }
+
+        const user = await prisma.Users.create({
+            data: { nome, username, telemovel, password, email, foto },
+        });
+        res.status(201).json(user);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
 
 // Update user
 exports.update = async (req, res) => {
-    try {
-        // Get requested user properties
-        const { id_utilizador, username, telemovel, password, email, foto } = req.body;
-        // Read local data JSON file
-        const datajson = fs.readFileSync("data/local/data.json", "utf-8");
-        // Parse to JSON
-        const data = JSON.parse(datajson);
-        // Find user to update
-        const user = data.users.find(user => user.id_utilizador == id_utilizador);
-        // Check if user exists
-        if (!user) {
-            return res.status(404).send("Utilizador não encontrado");
-        }
-        // Update properties
-        user.username = username;
-        user.telemovel = telemovel;
-        user.password = password;
-        user.email = email;
-        user.foto = foto;
-        // Update local database
-        fs.writeFileSync('data/local/data.json', JSON.stringify(data));
-        // Return updated user
-        return res.send({ id_utilizador, nome, username, telemovel, password, email, foto });
-    } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
+    const { id_utilizador, nome, username, telemovel, password, email, foto } = req.body;
+
+    if (!id_utilizador || !nome || !username || !telemovel || !password || !email) {
+        return res.status(400).json({ msg: "Campos obrigatórios em falta" });
     }
-}
+
+    try {
+        const existingUser = await prisma.Users.findUnique({
+            where: { id_utilizador },
+        });
+
+        if (!existingUser) {
+            return res.status(404).json({ msg: "Utilizador não encontrado" });
+        }
+
+        const user = await prisma.Users.update({
+            where: { id_utilizador },
+            data: { nome, username, telemovel, password, email, foto },
+        });
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
 
 // Delete user by his id_utilizador
 exports.delete = async (req, res) => {
+    const id = req.params.id_utilizador;
     try {
-        // Get user id requested
-        const id = req.params.id_utilizador;
-        // Read local data JSON file
-        const datajson = fs.readFileSync("data/local/data.json", "utf-8"); 
-        // Parse to JSON
-        const data = JSON.parse(datajson);
-        // Find user to delete
-        const userIndex = data.users.findIndex(user => user.id_utilizador == id);
-        // Check if user exists
-        if (userIndex === -1) {
-            return res.status(404).send("Utilizador não encontrado");
+        const existingUser = await prisma.Users.findUnique({
+            where: { id_utilizador },
+        });
+
+        if (!existingUser) {
+            return res.status(404).json({ msg: "Utilizador não encontrado" });
         }
-        // Delete user
-        data.users.splice(userIndex, 1);
-        // Update local database
-        fs.writeFileSync('data/local/data.json', JSON.stringify(data));
-        // Return ok
-        return res.status(200).send("Utilizador eliminado com sucesso");
+
+        await prisma.Users.delete({
+            where: { id_utilizador },
+        });
+        res.status(200).send("Utilizador eliminado com sucesso");
     } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
+        res.status(500).json({ msg: error.message });
     }
-}
+};

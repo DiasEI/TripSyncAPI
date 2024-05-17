@@ -1,5 +1,5 @@
 const viagemRouter = require('express').Router();
-const controller = require('../controllers/v1/viagem');
+const controller = require('../../controllers/v1/viagem');
 
 //viagens CRUD
 viagemRouter.get('/', controller.getAll); //read all

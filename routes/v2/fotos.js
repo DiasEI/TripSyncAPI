@@ -1,5 +1,5 @@
 const fotoRouter = require('express').Router();
-const controller = require('../controllers/foto');
+const controller = require('../../controllers/v2/foto');
 
 //fotos CRUD
 fotoRouter.get('/', controller.getAll); //read all

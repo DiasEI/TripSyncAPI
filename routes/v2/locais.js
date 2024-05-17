@@ -1,5 +1,5 @@
 const localRouter = require('express').Router();
-const controller = require('../controllers/local');
+const controller = require('../../controllers/v2/local');
 
 //locais CRUD
 localRouter.get('/', controller.getAll); //read all

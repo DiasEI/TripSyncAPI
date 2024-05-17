@@ -1,5 +1,5 @@
 const userRouter = require('express').Router();
-const controller = require('../controllers/user');
+const controller = require('../../controllers/v2/user');
 
 //users CRUD
 userRouter.get('/', controller.getAll); //read all

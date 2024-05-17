@@ -4,8 +4,12 @@
   "description": "Educational project",
   "main": "server.js",
   "scripts": {
+    "postinstall": "prisma generate && prisma migrate deploy",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
+  },
+  "prisma": {
+    "schema": "data/prisma/schema.prisma"
   },
   "author": "Trip Sync",
   "license": "ISC",
@@ -30,8 +34,5 @@
   "bugs": {
     "url": "https://github.com/DiasEI/TripSyncAPI/issues"
   },
-  "homepage": "https://github.com/DiasEI/TripSyncAPI#readme",
-  "prisma": {
-    "schema": "data/prisma/schema.prisma"
-  }
+  "homepage": "https://github.com/DiasEI/TripSyncAPI#readme"
 }

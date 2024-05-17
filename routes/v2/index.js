@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const usersRouter = ('../../controllers/v1/user');
-const fotosRouter = ('../../controllers/v1/foto');
-const locaisRouter = ('../../controllers/v1/local');
-const viagensRouter = ('../../controllers/v1/viagem');
+const usersRouter = require('./users');
+const fotosRouter = require('./fotos');
+const locaisRouter = require('./locais');
+const viagensRouter = require('./viagens');
 
 router.use('/users', usersRouter);
 router.use('/fotos', fotosRouter);
