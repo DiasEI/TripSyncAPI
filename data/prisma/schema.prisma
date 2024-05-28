@@ -10,7 +10,7 @@ datasource db {
 model Users {
   id_utilizador String   @id @default(uuid())
   nome          String
-  username      String
+  username      String   @unique
   telemovel     Int
   email         String
   password      String
