@@ -54,9 +54,8 @@ exports.signup = async (req, res) => {
             },
         });
 
-        // Automatically sign in the user after successful registration
-        const accessToken = authenticateUtil.generateAccessToken({ id: newUser.id, nome: newUser.nome, email: newUser.email });
-        return res.status(200).json({ code: 200, nome: newUser.nome, token: accessToken });
+        // Return success message and user data
+        return res.status(200).json({ success: true, user: newUser});
 
     } catch (error) {
         res.status(500).json({ code: 500, msg: error.message });
