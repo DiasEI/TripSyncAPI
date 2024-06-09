@@ -25,7 +25,7 @@ exports.signin = async (req, res) => {
         }
 
         const accessToken = authenticateUtil.generateAccessToken({ id: user.id, nome: user.nome, email: user.email });
-        res.status(200).json({ code: 200, nome: user.nome, token: accessToken });
+        res.status(200).json({ code: 200, id: user.id_utilizador, nome: user.nome, token: accessToken });
 
     } catch (error) {
         res.status(500).json({ code: 500, msg: error.message });
