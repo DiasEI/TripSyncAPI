@@ -13,7 +13,7 @@ exports.getAll = async (req, res) => {
 
 // Return user by his id_utilizador
 exports.getById = async (req, res) => {
-    const id = req.params.id_utilizador;
+    const id = req.params.id;
     try {
         const response = await prisma.Users.findUnique({
             where: { id_utilizador: id },
@@ -55,15 +55,15 @@ exports.create = async (req, res) => {
 
 // Update user
 exports.update = async (req, res) => {
-    const { id_utilizador, nome, username, telemovel, password, email, foto } = req.body;
+    const { id, nome, username, telemovel, password, email, foto } = req.body;
 
-    if (!id_utilizador || !nome || !username || !telemovel || !password || !email) {
+    if (!id || !nome || !username || !telemovel || !password || !email) {
         return res.status(400).json({ msg: "Campos obrigatórios em falta" });
     }
 
     try {
         const existingUser = await prisma.Users.findUnique({
-            where: { id_utilizador },
+            where: { id_utilizador: id },
         });
 
         if (!existingUser) {
@@ -71,7 +71,7 @@ exports.update = async (req, res) => {
         }
 
         const user = await prisma.Users.update({
-            where: { id_utilizador },
+            where: { id_utilizador: id },
             data: { nome, username, telemovel, password, email, foto },
         });
         res.status(200).json(user);
@@ -82,10 +82,10 @@ exports.update = async (req, res) => {
 
 // Delete user by his id_utilizador
 exports.delete = async (req, res) => {
-    const id = req.params.id_utilizador;
+    const id = req.params.id;
     try {
         const existingUser = await prisma.Users.findUnique({
-            where: { id_utilizador },
+            where: { id_utilizador: id },
         });
 
         if (!existingUser) {
@@ -93,7 +93,7 @@ exports.delete = async (req, res) => {
         }
 
         await prisma.Users.delete({
-            where: { id_utilizador },
+            where: { id_utilizador: id },
         });
         res.status(200).send("Utilizador eliminado com sucesso");
     } catch (error) {
