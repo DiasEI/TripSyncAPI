@@ -92,3 +92,24 @@ exports.delete = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+//Return viagem by its id_viagem and by user logged
+exports.getViagensByUser = async (req, res) => {
+    const userId = req.params.id_utilizador; // ID do usuário obtido dos parâmetros da solicitação
+
+    try {
+        const user = await prisma.Users.findUnique({
+            where: { id_utilizador: userId },
+            include: { Viagem: true }, // Inclui todas as viagens associadas a este usuário
+        });
+
+        if (!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado" });
+        }
+
+        res.status(200).json(user.Viagem);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
