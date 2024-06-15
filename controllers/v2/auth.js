@@ -53,7 +53,13 @@ exports.signup = async (req, res) => {
         };
 
         if (foto) {
-            userData.foto = foto;
+            if (foto.startsWith("data:image")) {
+                const base64Data = foto.replace(/^data:image\/\w+;base64,/, '');
+                const buffer = Buffer.from(base64Data, 'base64');
+                userData.foto = buffer;
+            } else {
+                return res.status(400).json({ code: 400, msg: 'Invalid format for foto field' });
+            }
         }
 
         const newUser = await prisma.Users.create({
