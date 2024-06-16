@@ -58,7 +58,7 @@ exports.signup = async (req, res) => {
                 const buffer = Buffer.from(base64Data, 'base64');
                 userData.foto = buffer;
             } else {
-                return res.status(400).json({ code: 402, msg: 'Invalid format for foto field' });
+                return res.status(402).json({ msg: 'Invalid format for foto field' });
             }
         }
 

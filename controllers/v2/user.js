@@ -95,7 +95,16 @@ exports.update = async (req, res) => {
         }
 
         if (email) dataToUpdate.email = email;
-        if (foto) dataToUpdate.foto = foto;
+        if (foto) {
+            if (foto.startsWith("data:image")) {
+                const base64Data = foto.replace(/^data:image\/\w+;base64,/, '');
+                const buffer = Buffer.from(base64Data, 'base64');
+                dataToUpdate.foto = buffer;
+            } else {
+                return res.status(402).json({ msg: 'Invalid format for foto field' });
+            }
+        }
+
 
         const updatedUser = await prisma.Users.update({
             where: { id_utilizador: id },
