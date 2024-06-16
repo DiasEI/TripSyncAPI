@@ -95,7 +95,7 @@ exports.delete = async (req, res) => {
 
 //Return viagem by its id_viagem and by user logged
 exports.getViagensByUser = async (req, res) => {
-    const userId = req.params.id_utilizador; // ID do usuário obtido dos parâmetros da solicitação
+    const userId = req.params.id; // ID do usuário obtido dos parâmetros da solicitação
 
     try {
         const user = await prisma.Users.findUnique({
