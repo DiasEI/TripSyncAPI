@@ -41,7 +41,7 @@ exports.signup = async (req, res) => {
         });
 
         if (existingUser) {
-            return res.status(400).json({ code: 400, msg: 'Username already taken' });
+            return res.status(400).json({ code: 401, msg: 'Username already taken' });
         }
 
         const userData = {
@@ -58,13 +58,9 @@ exports.signup = async (req, res) => {
                 const buffer = Buffer.from(base64Data, 'base64');
                 userData.foto = buffer;
             } else {
-                return res.status(400).json({ code: 400, msg: 'Invalid format for foto field' });
+                return res.status(400).json({ code: 402, msg: 'Invalid format for foto field' });
             }
         }
-
-        const newUser = await prisma.Users.create({
-            data: userData,
-        });
 
         // Return success message and user data
         return res.status(200).json({ code: 200, msg: 'User created successfully'});

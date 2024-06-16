@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const bcrypt = require('bcryptjs/dist/bcrypt');
 
 // Return all users
 exports.getAll = async (req, res) => {
@@ -55,11 +56,8 @@ exports.create = async (req, res) => {
 
 // Update user
 exports.update = async (req, res) => {
-    const { id, nome, username, telemovel, password, email, foto } = req.body;
-
-    if (!id || !nome || !username || !telemovel || !password || !email) {
-        return res.status(400).json({ msg: "Campos obrigatórios em falta" });
-    }
+    const { id } = req.params;
+    const { nome, username, telemovel, password, email, foto } = req.body;
 
     try {
         const existingUser = await prisma.Users.findUnique({
@@ -70,11 +68,41 @@ exports.update = async (req, res) => {
             return res.status(404).json({ msg: "Utilizador não encontrado" });
         }
 
-        const user = await prisma.Users.update({
+        if (username) {
+            const userWithSameUsername = await prisma.Users.findFirst({
+                where: {
+                    username: username,
+                    id_utilizador: {
+                        not: id 
+                    }
+                }
+            });
+
+            if (userWithSameUsername) {
+                return res.status(401).json({ msg: "Username already exists" });
+            }
+        }
+
+        const dataToUpdate = {};
+        
+        if (nome) dataToUpdate.nome = nome;
+        if (username) dataToUpdate.username = username;
+        if (telemovel) dataToUpdate.telemovel = telemovel;
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 8);
+            dataToUpdate.password = hashedPassword;
+        }
+
+        if (email) dataToUpdate.email = email;
+        if (foto) dataToUpdate.foto = foto;
+
+        const updatedUser = await prisma.Users.update({
             where: { id_utilizador: id },
-            data: { nome, username, telemovel, password, email, foto },
+            data: dataToUpdate,
         });
-        res.status(200).json(user);
+
+        res.status(200).json(updatedUser);
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
