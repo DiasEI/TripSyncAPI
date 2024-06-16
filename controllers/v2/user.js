@@ -56,7 +56,7 @@ exports.create = async (req, res) => {
 
 // Update user
 exports.update = async (req, res) => {
-    const { id } = req.params.id;
+    const id = req.params.id;
     const { nome, username, telemovel, password, email, foto } = req.body;
 
     try {
