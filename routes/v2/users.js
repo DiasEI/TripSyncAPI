@@ -5,7 +5,7 @@ const controller = require('../../controllers/v2/user');
 userRouter.get('/', controller.getAll); //read all
 userRouter.get('/:id', controller.getById); //read one by his id
 userRouter.post('/create', controller.create); //create new user
-userRouter.put('/update', controller.update); //update user
+userRouter.put('/update/:id', controller.update); //update user
 userRouter.delete('/delete/:id', controller.delete); //delete user
 
 module.exports = userRouter;
