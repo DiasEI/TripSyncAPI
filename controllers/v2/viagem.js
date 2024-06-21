@@ -131,7 +131,7 @@ exports.delete = async (req, res) => {
         }
 
         await prisma.Viagem.delete({
-            where: { id_viagem },
+            where: { id_viagem: id },
         });
         res.status(200).send("Viagem eliminada com sucesso");
     } catch (error) {
