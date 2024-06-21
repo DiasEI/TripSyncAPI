@@ -120,10 +120,10 @@ exports.update = async (req, res) => {
 
 // Delete viagem by its id_viagem
 exports.delete = async (req, res) => {
-    const id = req.params.id_viagem;
+    const id = req.params.id;
     try {
         const existingViagem = await prisma.Viagem.findUnique({
-            where: { id_viagem },
+            where: { id_viagem: id },
         });
 
         if (!existingViagem) {
