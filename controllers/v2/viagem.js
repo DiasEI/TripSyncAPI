@@ -29,16 +29,39 @@ exports.getById = async (req, res) => {
 
 // Create viagem
 exports.create = async (req, res) => {
-    const { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador } = req.body;
+    const { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador, foto } = req.body;
 
     if (!titulo || !descricao || !cidade || !custos || !data_inicio || !data_fim || !classificacao || !pais || !id_utilizador) {
         return res.status(400).json({ msg: "Campos obrigatórios em falta" });
     }
 
     try {
+        let viagemData = {
+            titulo,
+            descricao,
+            cidade,
+            custos,
+            data_inicio,
+            data_fim,
+            classificacao,
+            pais,
+            id_utilizador
+        };
+
+        if (foto) {
+            if (foto.startsWith("data:image")) {
+                const base64Data = foto.replace(/^data:image\/\w+;base64,/, '');
+                const buffer = Buffer.from(base64Data, 'base64');
+                viagemData.foto = buffer;
+            } else {
+                return res.status(402).json({ msg: 'Formato inválido para o campo foto' });
+            }
+        }
+
         const viagem = await prisma.Viagem.create({
-            data: { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador },
+            data: viagemData,
         });
+
         res.status(201).json(viagem);
     } catch (error) {
         res.status(500).json({ msg: error.message });
@@ -47,7 +70,7 @@ exports.create = async (req, res) => {
 
 // Update viagem
 exports.update = async (req, res) => {
-    const { id_viagem, titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador } = req.body;
+    const { id_viagem, titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador, foto } = req.body;
 
     if (!id_viagem || !titulo || !descricao || !cidade || !custos || !data_inicio || !data_fim || !classificacao || !pais || !id_utilizador) {
         return res.status(400).json({ msg: "Campos obrigatórios em falta" });
@@ -62,11 +85,34 @@ exports.update = async (req, res) => {
             return res.status(404).json({ msg: "Viagem não encontrada" });
         }
 
-        const viagem = await prisma.Viagem.update({
+        let viagemData = {
+            titulo,
+            descricao,
+            cidade,
+            custos,
+            data_inicio,
+            data_fim,
+            classificacao,
+            pais,
+            id_utilizador
+        };
+
+        if (foto) {
+            if (foto.startsWith("data:image")) {
+                const base64Data = foto.replace(/^data:image\/\w+;base64,/, '');
+                const buffer = Buffer.from(base64Data, 'base64');
+                viagemData.foto = buffer;
+            } else {
+                return res.status(400).json({ msg: 'Formato inválido para o campo foto' });
+            }
+        }
+
+        const updatedViagem = await prisma.Viagem.update({
             where: { id_viagem },
-            data: { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador },
+            data: viagemData,
         });
-        res.status(200).json(viagem);
+
+        res.status(200).json(updatedViagem);
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
