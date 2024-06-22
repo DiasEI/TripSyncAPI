@@ -135,7 +135,7 @@ exports.addFotos = async (req, res) => {
         // Prepare fotos data
         const fotosData = foto.map(foto => ({
             id_foto: foto.id_foto || undefined,
-            imageData: foto.imageData, 
+            imageData: Buffer.from(foto.imageData, 'base64'),
             id_viagem,
         }));
 
