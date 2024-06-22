@@ -115,6 +115,41 @@ exports.delete = async (req, res) => {
     }
 };
 
+// Add fotos to a Viagem
+exports.addFotos = async (req, res) => {
+    const { id_viagem, foto } = req.body;
+
+    if (!id_viagem || !foto || !Array.isArray(foto)) {
+        return res.status(400).json({ msg: "Campos obrigatórios em falta" });
+    }
+
+    try {
+        const existingViagem = await prisma.viagem.findUnique({
+            where: { id_viagem },
+        });
+
+        if (!existingViagem) {
+            return res.status(404).json({ msg: "Viagem não encontrada" });
+        }
+
+        // Prepare fotos data
+        const fotosData = foto.map(foto => ({
+            id_foto: foto.id_foto || undefined,
+            imageData: foto.imageData, 
+            id_viagem,
+        }));
+
+        // Add fotos to the database
+        const createdFotos = await prisma.foto.createMany({
+            data: fotosData,
+        });
+
+        res.status(201).json({ msg: "Fotos adicionadas com sucesso", fotos: createdFotos });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
 //Return viagem by its id_viagem and by user logged
 exports.getViagensByUser = async (req, res) => {
     const userId = req.params.id; // ID do usuário obtido dos parâmetros da solicitação
