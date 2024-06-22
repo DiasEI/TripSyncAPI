@@ -13,7 +13,7 @@ exports.getAll = async (req, res) => {
 
 // Return viagem by its id_viagem
 exports.getById = async (req, res) => {
-    const id = req.params.id_viagem;
+    const id = req.params.id;
     try {
         const response = await prisma.Viagem.findUnique({
             where: { id_viagem: id },
