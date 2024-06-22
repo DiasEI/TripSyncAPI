@@ -150,6 +150,37 @@ exports.addFotos = async (req, res) => {
     }
 };
 
+// Get fotos by id_viagem
+exports.getFotos = async (req, res) => {
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).json({ msg: "Campo id_viagem em falta" });
+    }
+
+    try {
+        const fotos = await prisma.foto.findMany({
+            where: { id_viagem: id },
+            select: {
+                id_foto: true,
+                imageData: true,
+            },
+        });
+
+        if (!fotos.length) {
+            return res.status(404).json({ msg: "Nenhuma foto encontrada para esta viagem" });
+        }
+
+        const fotosResponse = fotos.map(foto => ({
+            id_foto: foto.id_foto,
+            imageData: foto.imageData.toString('base64'),
+        }));
+
+        res.status(200).json({ fotos: fotosResponse });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
 //Return viagem by its id_viagem and by user logged
 exports.getViagensByUser = async (req, res) => {
     const userId = req.params.id; // ID do usuário obtido dos parâmetros da solicitação
