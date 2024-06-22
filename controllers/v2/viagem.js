@@ -58,7 +58,9 @@ exports.create = async (req, res) => {
 
 // Update viagem
 exports.update = async (req, res) => {
-    const { id_viagem, titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador } = req.body;
+    const id_viagem = req.params.id_viagem;
+
+    const { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador } = req.body;
 
     if (!id_viagem || !titulo || !descricao || !cidade || !custos || !data_inicio || !data_fim || !classificacao || !pais || !id_utilizador) {
         return res.status(400).json({ msg: "Campos obrigatórios em falta" });
