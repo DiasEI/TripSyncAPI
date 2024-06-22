@@ -29,38 +29,25 @@ exports.getById = async (req, res) => {
 
 // Create viagem
 exports.create = async (req, res) => {
-    const { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador, foto } = req.body;
+    const { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador, foto, local } = req.body;
 
     if (!titulo || !descricao || !cidade || !custos || !data_inicio || !data_fim || !classificacao || !pais || !id_utilizador) {
         return res.status(400).json({ msg: "Campos obrigatórios em falta" });
     }
 
     try {
-        let viagemData = {
-            titulo,
-            descricao,
-            cidade,
-            custos,
-            data_inicio,
-            data_fim,
-            classificacao,
-            pais,
-            id_utilizador
-        };
+        const existingViagem = await prisma.Viagem.findUnique({
+            where: { id_viagem },
+        });
 
-        if (foto) {
-            if (foto.startsWith("data:image")) {
-                const base64Data = foto.replace(/^data:image\/\w+;base64,/, '');
-                const buffer = Buffer.from(base64Data, 'base64');
-                viagemData.foto = buffer;
-            } else {
-                return res.status(402).json({ msg: 'Formato inválido para o campo foto' });
-            }
+        if (!existingViagem) {
+            return res.status(404).json({ msg: "Viagem não encontrada" });
         }
 
-        const viagem = await prisma.Viagem.create({
-            data: viagemData,
-        });
+        const viagem = await prisma.Viagem.update({
+            where: { id_viagem },
+            data: { titulo, descricao, cidade, custos, data_inicio, data_fim, classificacao, pais, id_utilizador, foto, local },
+            });
 
         res.status(201).json(viagem);
     } catch (error) {
