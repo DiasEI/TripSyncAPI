@@ -181,6 +181,72 @@ exports.getFotos = async (req, res) => {
     }
 };
 
+// Add Local to a Viagem
+exports.addLocal = async (req, res) => {
+    const { id_viagem, locais } = req.body;
+
+    if (!id_viagem || !Array.isArray(locais)) {
+        return res.status(400).json({ msg: "Campos obrigatórios em falta" });
+    }
+
+    try {
+        const existingViagem = await prisma.viagem.findUnique({
+            where: { id_viagem },
+        });
+
+        if (!existingViagem) {
+            return res.status(404).json({ msg: "Viagem não encontrada" });
+        }
+
+        // Prepare locais data
+        const locaisData = locais.map(local => ({
+            nome: local.nome,
+            localizacao: local.localizacao,
+            tipo: local.tipo,
+            classificacao: local.classificacao,
+            id_viagem
+        }));
+
+        // Add locais to the database
+        const createdLocais = await prisma.localData.createMany({
+            data: locaisData,
+        });
+
+        res.status(201).json({ msg: "Locais adicionados com sucesso", locais: createdLocais });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+// Get locals by id_viagem
+exports.getLocal = async (req, res) => {
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).json({ msg: "Campo id_viagem em falta" });
+    }
+
+    try {
+        const locais = await prisma.localData.findMany({
+            where: { id_viagem: id },
+            select: {
+                id_local: true,
+                nome: true,
+                localizacao: true,
+                tipo: true,
+                classificacao: true,
+            },
+        });
+
+        if (!locais.length) {
+            return res.status(404).json({ msg: "Nenhum local encontrado para esta viagem" });
+        }
+
+        res.status(200).json({ locais });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
 //Return viagem by its id_viagem and by user logged
 exports.getViagensByUser = async (req, res) => {
     const userId = req.params.id; // ID do usuário obtido dos parâmetros da solicitação
