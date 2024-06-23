@@ -200,6 +200,7 @@ exports.addLocal = async (req, res) => {
 
         // Prepare locais data
         const locaisData = locais.map(local => ({
+            id_local: local.id_local || undefined,
             nome: local.nome,
             localizacao: local.localizacao,
             tipo: local.tipo,
@@ -208,7 +209,7 @@ exports.addLocal = async (req, res) => {
         }));
 
         // Add locais to the database
-        const createdLocais = await prisma.localData.createMany({
+        const createdLocais = await prisma.local.createMany({
             data: locaisData,
         });
 
