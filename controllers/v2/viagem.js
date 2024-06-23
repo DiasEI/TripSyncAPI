@@ -227,7 +227,7 @@ exports.getLocal = async (req, res) => {
     }
 
     try {
-        const locais = await prisma.localData.findMany({
+        const locais = await prisma.local.findMany({
             where: { id_viagem: id },
             select: {
                 id_local: true,
