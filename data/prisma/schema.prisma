@@ -22,7 +22,7 @@ model foto {
   id_foto   String @id @default(uuid())
   imageData Bytes?
   id_viagem String
-  viagem    Viagem @relation(fields: [id_viagem], references: [id_viagem])
+  viagem    Viagem @relation(fields: [id_viagem], references: [id_viagem], onDelete: Cascade)
 }
 
 model local {
@@ -32,7 +32,7 @@ model local {
   tipo          String
   id_viagem     String
   classificacao Int
-  viagem        Viagem @relation(fields: [id_viagem], references: [id_viagem])
+  viagem        Viagem @relation(fields: [id_viagem], references: [id_viagem], onDelete: Cascade)
 }
 
 model Viagem {
@@ -46,7 +46,7 @@ model Viagem {
   classificacao Int
   id_utilizador String
   pais          String
-  user          Users    @relation(fields: [id_utilizador], references: [id_utilizador])
+  user          Users    @relation(fields: [id_utilizador], references: [id_utilizador], onDelete: Cascade)
   foto          foto[]
   local         local[]
 }
